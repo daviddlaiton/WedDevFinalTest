@@ -7,3 +7,19 @@
 .mainTitle {
     text-align: center;
 }
+
+.body{
+    background-color: #d0d6e0;
+}
+
+.commentDetail {
+    border: 2px solid steelblue;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+.nameComment {
+    font-size: 20px;
+    font-style: italic;
+}
