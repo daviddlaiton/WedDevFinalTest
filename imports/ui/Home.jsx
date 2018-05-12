@@ -6,7 +6,7 @@ import "./css/Home.css";
 import AccountsUIWrapper from "./AccountsUIWrapper.jsx";
 import { Comments } from "../api/Comments.js";
 import Message from "./Message.jsx";
-import {Session} from "meteor/session";
+import { Session } from "meteor/session";
 
 class Home extends React.Component {
 
@@ -16,6 +16,7 @@ class Home extends React.Component {
 
         this.state = {
             comment: "",
+            color: "steelblue",
             schedules: [],
             agencies: [],
             routes: [],
@@ -31,6 +32,7 @@ class Home extends React.Component {
         this.handleCommentChange = this.handleCommentChange.bind(this);
         this.handleComment = this.handleComment.bind(this);
         this.handleOnMessage = this.handleOnMessage.bind(this);
+        this.handleColorChange = this.handleColorChange.bind(this);
 
     }
 
@@ -86,11 +88,11 @@ class Home extends React.Component {
     }
 
     handleOnMessage(pagency, proute) {
-        Session.set({filterAgency: pagency});
-        Session.set({filterRoute: proute});
+        Session.set({ filterAgency: pagency });
+        Session.set({ filterRoute: proute });
 
-        this.setState({ filterAgency: pagency});
-        this.setState({ filterRoute: proute});
+        this.setState({ filterAgency: pagency });
+        this.setState({ filterRoute: proute });
         let titleArr = this.state.filterAgency.split("/");
         let title = titleArr[0];
         let titleRArr = this.state.filterRoute.split("/");
@@ -98,6 +100,11 @@ class Home extends React.Component {
         this.setState({ graphTitleAgency: title, graphTitleRoute: titleR })
         this.getData();
         this.renderGraph();
+    }
+
+    //Componente "creativo"
+    handleColorChange(e) {
+        this.setState({ color: e.target.value });
     }
 
     componentDidMount() {
@@ -156,7 +163,7 @@ class Home extends React.Component {
                 .enter()
                 .append("path")
                 .attr("fill", "none")
-                .attr("stroke", "steelblue")
+                .attr("stroke", this.state.color)
                 .attr("stroke-width", 2)
                 .attr("stroke-linejoin", "round")
                 .attr("stroke-linecap", "round")
@@ -201,7 +208,7 @@ class Home extends React.Component {
                     </div>
                     <div className="row">
                         <div className="col-md-1"></div>
-                        <div className="col-md-10">
+                        <div className="col-md-8">
                             <h2>Graph</h2>
                             <br />
                             <h5>This graph shows information about the time tables of the agency <strong> {this.state.graphTitleAgency}</strong> and the route <strong>  {this.state.graphTitleRoute} </strong></h5>
@@ -212,6 +219,21 @@ class Home extends React.Component {
                                 width="1000"
                                 height="500"
                                 ref={(svg) => this.svg = svg}></svg>
+                        </div>
+                        <div className="col-md-2">
+                            {/**Componente "creativo"**/}
+                            <h4>Change the color of the graph!</h4>
+                            <div className="formFilter">
+                                <form>
+                                    <label>
+                                        <select onChange={this.handleColorChange}>
+                                            <option className="dropdown-item"> steelblue </option>
+                                            <option className="dropdown-item"> red </option>
+                                            <option className="dropdown-item"> green </option>
+                                        </select>
+                                    </label>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     <br />
@@ -263,7 +285,7 @@ class Home extends React.Component {
                         <div className="col-md-1"></div>
                         <div className="col-md-4">
                             <div className="comments">
-                                <h2>Leave a comment of the time table you"re seeing!</h2>
+                                <h2>Leave a comment of the time table you're seeing!</h2>
                                 <form>
                                     <div className="form-group">
                                         <label htmlFor="usr">Comment:</label>
