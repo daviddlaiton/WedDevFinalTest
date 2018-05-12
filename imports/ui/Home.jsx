@@ -10,26 +10,38 @@ export class Home extends React.Component {
 
         this.state = {
             schedules: [],
-            agencies: []
+            agencies: [],
+            routes: [],
+            filterAgency: "",
+            filterRoute: ""
         }
+
+        this.handleAgencyChange = this.handleAgencyChange.bind(this);
+        this.handleRouteChange = this.handleRouteChange.bind(this);
     }
 
-    handleRoute(e) {
-        console.log(e.currentTarget.textContent);
+    handleRouteChange(e) {
+        this.setState({ filterRoute: e.target.value });
+    }
+
+    handleAgencyChange(e) {
+        this.setState({ filterAgency: e.target.value });
+    }
+
+    handleSearch() {
+
     }
 
 
     componentDidMount() {
         this.getData();
-        console.log("hizo el didMount");
     }
 
     renderGraph() {
-        console.log("entro al renderGraph con este estado");
-        console.log(this.state)
-        if (this.state.schedules.route !== undefined) {
+        if (this.state.schedules.length > 0) {
 
-            selectedRoute = this.state.schedules.route[0];
+            selectedRoute = this.state.schedules[0];
+            console.log
 
             let buses = []
 
@@ -87,15 +99,20 @@ export class Home extends React.Component {
     getData() {
         Meteor.call("routes.getSchedules", (err, result) => {
             if (err) throw err;
-            console.log(result);
-            this.setState({ schedules: result });
+            this.setState({ schedules: result.route });
         });
 
-        Meteor.call("agencies.getAll", (err, result) => {
+        let va = "sf-muni";
+
+        Meteor.call("agencies.getAll", va, (err, result) => {
             if (err) throw err;
-            console.log(result);
-            this.setState({ agencies: result });
-        })
+            this.setState({ agencies: result.agency });
+        });
+
+        Meteor.call("routes.getAll", (err, result) => {
+            if (err) throw err;
+            this.setState({ routes: result.route });
+        });
     }
 
     get
@@ -112,7 +129,6 @@ export class Home extends React.Component {
     }
 
     renderAgenciesDropdown() {
-
     }
 
 
@@ -120,34 +136,68 @@ export class Home extends React.Component {
     render() {
         return (
             <div>
-                <div className="container">
+                <div className="container-fluid">
                     <div className="jumbotron">
                         <h1 className="mainTitle">San Francisco buses schedule</h1>
                         <img className="busLogo" src="https://upload.wikimedia.org/wikipedia/commons/4/44/Metrobuscabildo.png" alt="Bus Logo" width="100" height="100" />
                     </div>
                     <br />
-                    <div className="filters">
-                        <h3>Filter your selection</h3>
-                        <div className="dropdown">
-                            <button className="btn btn-primary dropdown-toggle" type="button"
-                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                By agency
-                                    </button>
-                            <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
+                    <div className="row">
+                        <div className="col-md-2"></div>
+                        <div className="col-md-8">
+                            <div className="filters">
+                                <h3>Filter your selection</h3>
+                                <br />
+                                <h4>By agency</h4>
+                                <div className="formFilter">
+                                    <form>
+                                        <label>
+                                            <select onChange={this.handleAgencyChange}>
+                                                {
+                                                    this.state.agencies.map((r, i) => (
+                                                        <option key={i} className="dropdown-item"> {r.title} </option>
+                                                    ))
+                                                }
+                                            </select>
+                                        </label>
+                                    </form>
+                                </div>
+                                <br />
+                                <h4>By route</h4>
+                                <div className="formFilter">
+                                    <form>
+                                        <label>
+                                            <select onChange={this.handleRouteChange}>
+                                                {
+                                                    this.state.routes.map((r, i) => (
+                                                        <option key={i} className="dropdown-item"> {r.title} </option>
+                                                    ))
+                                                }
+                                            </select>
+                                        </label>
+                                    </form>
+                                </div>
+                                <br />
+                                <button type="button" className="btn btn-primary" onClick={this.handleSearch}>Search</button>
+                                <br />
+                                <h5><strong>Advice:</strong> Changes may take a while to be shown.</h5>
+
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-1"></div>
+                            <div className="col-md-10">
+                                <h3>Graph</h3>
+                                {
+                                    this.renderGraph()
+                                }
+                                <svg
+                                    width="1000"
+                                    height="500"
+                                    ref={(svg) => this.svg = svg}></svg>
                             </div>
                         </div>
                     </div>
-                    <h3>Graph</h3>
-                    {
-                        this.renderGraph()
-                    }
-                    <svg
-                        width="1000"
-                        height="500"
-                        ref={(svg) => this.svg = svg}></svg>
                 </div>
             </div>
         )
