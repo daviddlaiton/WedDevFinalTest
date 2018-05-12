@@ -79,7 +79,7 @@ class Home extends React.Component {
         else {
             let filAgency = this.state.filterAgency;
             let filRoute = this.state.filterRoute;
-            Meteor.call("comments.add", this.state.comment, Meteor.userId(), filAgency, filRoute);
+            Meteor.call("comments.add", this.state.comment, Meteor.user().emails[0].address, filAgency, filRoute);
             alert("Comment added!");
 
             document.getElementById("commentTextBox").value = ""
@@ -176,7 +176,7 @@ class Home extends React.Component {
 
         let filAgency = this.state.filterAgency;
         let filRoute = this.state.filterRoute;
-        Meteor.call("routes.getSchedules", filAgency, filRoute, (err, result) => {
+        Meteor.call("routes.getSchedules", filAgency, filRoute,(err, result) => {
             if (err) throw err;
             this.setState({ schedules: result.route });
         });
@@ -306,10 +306,11 @@ class Home extends React.Component {
                                 <br />
                                 {
                                     this.props.comments.map((c) => (
-                                        <Message onMessage={this.handleOnMessage} className="commentDetail" key={c._id} user={Meteor.users.findOne(c.user).emails[0].address} date={c.dateCreated}
+                                        <Message onMessage={this.handleOnMessage} className="commentDetail" key={c._id} commentId={c._id} date={c.dateCreated}
                                             comment={c.comment} agency={c.agency} route={c.route} />
                                     ))
-                                }
+                                }                                
+                                
                             </div>
                         </div>
                     </div>

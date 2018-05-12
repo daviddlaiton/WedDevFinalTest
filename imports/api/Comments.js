@@ -14,9 +14,6 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
-    "comments.get"(filAgency, filRoute) {
-    },
-
     "comments.add"(commetToAdd, userId, pAgency, pRoute) {
         check(commetToAdd, String);
         check(userId, String);
@@ -31,5 +28,11 @@ Meteor.methods({
             route : pRoute
         }
         );
-    }
+    },
+
+    "comments.getUser"(id){
+        let comm = Comments.findOne(id)
+        let user = comm.user;
+        return user;
+      }
 });

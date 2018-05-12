@@ -34,5 +34,5 @@ Meteor.methods({
           .then((r) => {
             return r.json();
           }).then((data) => { return data; });
-      }
+        }
 });
